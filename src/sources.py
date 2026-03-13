@@ -57,6 +57,7 @@ class GeneratorTaskSource:
             logging.error("ERROR: Seed должен быть целым числом или None")
             raise TypeError("Seed должен быть целым числом или None")
         self.count = count
+        self.seed = seed
         self._random = random.Random(seed)
 
     def get_tasks(self) -> list[Task]:
@@ -95,7 +96,7 @@ class GeneratorTaskSource:
                     },
                 )
             )
-        logging.info(f"Сгенерировано {len(tasks)} задач с seed={self._random.seed}")
+        logging.info(f"Сгенерировано {len(tasks)} задач с seed={self.seed}")
         return tasks
 
 
