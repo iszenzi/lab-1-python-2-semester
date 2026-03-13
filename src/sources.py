@@ -90,7 +90,7 @@ class GeneratorTaskSource:
             "integration_task",
         ]
         for i in range(self.count):
-            task_type = tasks_type[i % len(tasks_type)]
+            task_type = self._random.choice(tasks_type)
             tasks.append(
                 Task(
                     id=i + 1,

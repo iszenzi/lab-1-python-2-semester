@@ -79,10 +79,23 @@ def read(
         sources.append(ApiTaskSource())
 
     loader = TaskLoader(sources)
-    tasks = loader.load_tasks()
+    grouped = loader.load_tasks()
 
-    print_tasks(tasks)
-    print(f"\nВсего: {len(tasks)}")
+    total = 0
+    for source, tasks in grouped:
+        if isinstance(source, FileTaskSource):
+            source_title = f"файл {source.path}"
+        elif isinstance(source, GeneratorTaskSource):
+            source_title = f"генератор count={source.count} seed={source.seed}"
+        else:
+            source_title = "api-заглушка"
+
+        print(f"Источник: {source_title}")
+        print_tasks(tasks)
+        print("")
+        total += len(tasks)
+
+    print(f"\nВсего: {total}")
 
 
 def main() -> None:

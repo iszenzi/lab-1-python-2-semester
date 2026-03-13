@@ -28,14 +28,17 @@ class TaskLoader:
             raise TypeError("Источник должен соответствовать протоколу TaskSource")
         self.sources.append(source)
 
-    def load_tasks(self) -> list[Task]:
+    def load_tasks(self) -> list[tuple[TaskSource, list[Task]]]:
         """
         Загружает задачи из всех источников
-        :return: Список задач
+        :return: Список пар (источник, задачи)
         """
         logging.info(f"Загрузка задач из {len(self.sources)} источников")
-        tasks: list[Task] = []
+        result: list[tuple[TaskSource, list[Task]]] = []
+        total = 0
         for source in self.sources:
-            tasks.extend(source.get_tasks())
-        logging.info(f"Загружено {len(tasks)} задач из {len(self.sources)} источников")
-        return tasks
+            source_tasks = source.get_tasks()
+            result.append((source, source_tasks))
+            total += len(source_tasks)
+        logging.info(f"Загружено {total} задач из {len(self.sources)} источников")
+        return result
