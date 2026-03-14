@@ -37,8 +37,10 @@ class TestFileTaskSource:
         Проверяет ошибку при отсутствии файла
         """
         source = FileTaskSource("missing.json")
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(FileNotFoundError) as exc_info:
             source.get_tasks()
+        assert "Файл missing.json не найден" in str(exc_info.value)
+        assert exc_info.type is FileNotFoundError
 
 
 class TestGeneratorTaskSource:
@@ -63,12 +65,24 @@ class TestGeneratorTaskSource:
         """
         Проверяет ошибки при неверных параметрах генератора
         """
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError) as exc_info:
             GeneratorTaskSource(count=0)
-        with pytest.raises(TypeError):
+        assert "Количество задач должно быть целым положительным числом" in str(
+            exc_info.value
+        )
+        assert exc_info.type is TypeError
+
+        with pytest.raises(TypeError) as exc_info:
             GeneratorTaskSource(count=-1)
-        with pytest.raises(TypeError):
+        assert "Количество задач должно быть целым положительным числом" in str(
+            exc_info.value
+        )
+        assert exc_info.type is TypeError
+
+        with pytest.raises(TypeError) as exc_info:
             GeneratorTaskSource(count=1, seed="bad")
+        assert "Seed должен быть целым числом или None" in str(exc_info.value)
+        assert exc_info.type is TypeError
 
 
 class TestApiTaskSource:
@@ -98,8 +112,12 @@ class TestTaskLoader:
         Проверяет отказ добавления источника без контракта
         """
         loader = TaskLoader()
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError) as exc_info:
             loader.add_source(object())
+        assert "Источник должен соответствовать протоколу TaskSource" in str(
+            exc_info.value
+        )
+        assert exc_info.type is TypeError
 
     def test_load_tasks_grouped_order(self, tmp_path):
         """
